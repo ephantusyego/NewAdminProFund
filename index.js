@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profund Admin</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* LOGIN */
+    #loginPage {
+      margin: auto;
+      text-align: center;
+    }
+
+    /* DASHBOARD */
+    #dashboard {
+      display: none;
+      width: 100%;
+      display: flex;
+    }
+
+    /* LEFT PANEL */
+    #leftPanel {
+      width: 250px;
+      background: #111827;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #leftPanel h3 {
+      margin-top: 0;
+    }
+
+    .menu-btn {
+      padding: 10px;
+      border: none;
+      background: #1f2937;
+      color: white;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 5px;
+    }
+
+    .menu-btn:hover {
+      background: #374151;
+    }
+
+    /* RIGHT PANEL */
+    #rightPanel {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f9fafb;
+    }
+
+    #sectionTitle {
+      margin-top: 0;
+    }
+
+    /* CARD */
+    .card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* BADGES */
+    .badge {
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .pending { background: orange; color: white; }
+    .active { background: green; color: white; }
+    .rejected { background: red; color: white; }
+
+    /* BUTTONS */
+    .btn {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .green { background: green; color: white; }
+    .red { background: red; color: white; }
+    .blue { background: #2563eb; color: white; }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- =========================
+     🔐 LOGIN PAGE
+========================= -->
+<div id="loginPage">
+  <h2>Admin Login</h2>
+  <input id="username" placeholder="Username" />
+  <input id="password" type="password" placeholder="Password" />
+  <button class="btn blue" onclick="login()">Login</button>
+</div>
+
+<!-- =========================
+     📊 DASHBOARD
+========================= -->
+<div id="dashboard">
+
+  <!-- LEFT PANEL -->
+  <div id="leftPanel">
+    <h3>Menu</h3>
+
+    <!-- COMMON -->
+    <button class="menu-btn" onclick="loadDrives()">All Drives</button>
+    <button class="menu-btn" onclick="loadAllContributions()">Contributions</button>
+
+    <!-- INPUTTER -->
+    <div id="inputterMenu">
+      <h4>Create Drive</h4>
+      <input id="title" placeholder="Title">
+      <input id="description" placeholder="Description">
+      <select id="accessType">
+        <option value="open">Open</option>
+        <option value="locked">Locked</option>
+      </select>
+      <input id="drivePin" placeholder="PIN (optional)">
+      <button class="btn blue" onclick="createDrive()">Create</button>
+    </div>
+
+    <!-- AUTHORIZER -->
+    <div id="authorizerMenu">
+      <button class="menu-btn" onclick="loadPendingDrives()">Pending Drives</button>
+      <button class="menu-btn" onclick="loadAllDrivesForAuthorizer()">All Drives (Full)</button>
+      <button class="menu-btn" onclick="loadUsers()">Users</button>
+      <button class="menu-btn" onclick="loadLogs()">Logs</button>
+
+      <h4>Create User</h4>
+      <input id="newUser" placeholder="Username">
+      <input id="newPass" placeholder="Password">
+      <select id="newRole">
+        <option value="inputter">Inputter</option>
+        <option value="authorizer">Authorizer</option>
+      </select>
+      <button class="btn blue" onclick="createUser()">Create User</button>
+    </div>
+
+    <hr>
+    <button class="btn red" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="rightPanel">
+    <h2 id="sectionTitle">Dashboard</h2>
+
+    <!-- Dynamic content loads here -->
+  </div>
+
+</div>
+
+<!-- =========================
+     📦 JS FILES (ORDER MATTERS)
+========================= -->
+<script src="config.js"></script>
+<script src="dashboard.js"></script>
+<script src="drives.js"></script>
+<script src="contributions.js"></script>
+<script src="users.js"></script>
+<script src="logs.js"></script>
+
+</body>
+</html>
