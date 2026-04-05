@@ -24,3 +24,4 @@ async function loadLogs() {
 
   render("rightPanel", html);
 }
+window.loadLogs = loadLogs;
