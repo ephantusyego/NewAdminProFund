@@ -96,5 +96,42 @@ async function rejectDrive(id) {
 
   loadPendingDrives();
 }
+async function createDrive() {
+  const title = document.getElementById("title").value;
+  const description = document.getElementById("description").value;
+  const accessType = document.getElementById("accessType").value;
+  const pin = document.getElementById("drivePin").value;
+
+  if (!title || !description) {
+    alert("Fill all fields");
+    return;
+  }
+
+  if (accessType === "locked" && !pin) {
+    alert("PIN required");
+    return;
+  }
+
+  const res = await fetch(
+    `${API}/fund-drives?title=${title}&description=${description}&access_type=${accessType}&pin=${pin}`,
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "admin": adminUser
+      }
+    }
+  );
+
+  const data = await res.json();
+
+  if (data.error) {
+    alert(data.error);
+  } else {
+    alert("Drive submitted for approval");
+    loadDrives();
+  }
+}
+
 window.loadDrives = loadDrives;
 window.loadPendingDrives = loadPendingDrives;
