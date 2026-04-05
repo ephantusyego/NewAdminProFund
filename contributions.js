@@ -97,7 +97,6 @@ window.viewContributions = async function (driveId) {
 
   } catch (err) {
     render("rightPanel", "<p>Failed to load contributions</p>");
-    console.error(err);
   }
 };
 function formatKES(amount) {
