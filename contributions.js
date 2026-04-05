@@ -49,6 +49,20 @@ window.loadAllContributions = async function () {
     render("rightPanel", "<p>Failed to load contributions</p>");
     console.error(err);
   }
+let html = `
+  <div class="top-bar">
+    <input type="text" id="searchInput" placeholder="Search phone or name..." />
+    
+    <select id="statusFilter">
+      <option value="">All Status</option>
+      <option value="success">Success</option>
+      <option value="pending">Pending</option>
+      <option value="failed">Failed</option>
+    </select>
+
+    <button class="btn" onclick="applyFilters()">Apply</button>
+  </div>
+`;
 };
 window.viewContributions = async function (driveId) {
   setTitle("Contributions");
@@ -110,17 +124,4 @@ window.viewContributions = async function (driveId) {
     console.error(err);
   }
 };
-let html = `
-  <div class="top-bar">
-    <input type="text" id="searchInput" placeholder="Search phone or name..." />
-    
-    <select id="statusFilter">
-      <option value="">All Status</option>
-      <option value="success">Success</option>
-      <option value="pending">Pending</option>
-      <option value="failed">Failed</option>
-    </select>
 
-    <button class="btn" onclick="applyFilters()">Apply</button>
-  </div>
-`;
