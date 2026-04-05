@@ -45,8 +45,8 @@ window.viewContributions = async function (driveId) {
 
   render("rightPanel", `<p>Loading...</p>`);
 
-  try {
-    const data = await apiRequest(`/fund-drives/${driveId}/contributions`);
+  try { 
+    const data = await apiRequest(`/collections?drive_id=${driveId}`);
 
     let html = `
       <div class="top-bar">
