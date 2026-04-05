@@ -59,3 +59,15 @@ async function viewContributions(driveId) {
 
   render("rightPanel", html);
 }
+let lastView = "all"; // or "pending"
+
+function loadDrives() {
+  lastView = "all";
+  ...
+}
+
+function loadPendingDrives() {
+  lastView = "pending";
+  ...
+}
+<button onclick="lastView === 'pending' ? loadPendingDrives() : loadDrives()">✖ Close</button>
