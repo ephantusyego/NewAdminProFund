@@ -21,7 +21,8 @@ window.loadAllContributions = async function () {
         <div><strong>Total:</strong> KES ${totalAmount}</div>
         <div><strong>Entries:</strong> ${totalCount}</div>
       </div>
-
+<input type="date" id="startDate">
+<input type="date" id="endDate">
       <div class="grid">
     `;
 
