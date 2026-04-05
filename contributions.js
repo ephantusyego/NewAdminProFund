@@ -11,7 +11,8 @@ window.loadAllContributions = async function () {
       render("rightPanel", "<p>Error loading contributions</p>");
       return;
     }
-
+allContributions = data;
+renderContributions(data);
     // 🔢 Calculate totals
     const totalAmount = data.reduce((sum, c) => sum + (c.amount || 0), 0);
     const totalCount = data.length;
@@ -126,3 +127,25 @@ window.viewContributions = async function (driveId) {
   }
 };
 
+function renderContributions(data) {
+  let html = `<div class="grid">`;
+
+  data.forEach(c => {
+    html += `
+      <div class="card">
+        <div class="card-header">
+          <strong>${c.payer_name || "Anonymous"}</strong>
+          <span class="badge ${c.status}">${c.status}</span>
+        </div>
+        <div class="card-body">
+          <div>${c.phone || "-"}</div>
+          <div class="amount">KES ${c.amount}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  render("rightPanel", html);
+}
