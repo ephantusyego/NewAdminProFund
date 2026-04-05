@@ -24,6 +24,7 @@ renderContributions(data);
       </div>
 <input type="date" id="startDate">
 <input type="date" id="endDate">
+<button class="btn green" onclick="exportCSV()">Export CSV</button>
       <div class="grid">
     `;
 
@@ -149,3 +150,41 @@ function renderContributions(data) {
 
   render("rightPanel", html);
 }
+const start = document.getElementById("startDate").value;
+const end = document.getElementById("endDate").value;
+
+const matchesDate = (() => {
+  if (!start && !end) return true;
+
+  const date = new Date(c.created_at); // ensure backend sends this
+
+  if (start && date < new Date(start)) return false;
+  if (end && date > new Date(end)) return false;
+
+  return true;
+})();
+
+window.exportCSV = function () {
+  if (!allContributions.length) return;
+
+  const headers = ["Name", "Phone", "Amount", "Status"];
+  const rows = allContributions.map(c => [
+    c.payer_name || "Anonymous",
+    c.phone || "-",
+    c.amount,
+    c.status
+  ]);
+
+  let csv = headers.join(",") + "\n";
+  rows.forEach(r => {
+    csv += r.join(",") + "\n";
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "contributions.csv";
+  a.click();
+};
