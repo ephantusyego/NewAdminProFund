@@ -83,3 +83,4 @@ async function logout() {
   document.getElementById("dashboard").style.display = "none";
   document.getElementById("loginPage").style.display = "block";
 }
+window.setTitle = setTitle;
