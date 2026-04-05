@@ -44,3 +44,5 @@ async function createUser() {
   const data = await res.json();
   alert(data.message || data.error);
 }
+window.loadUsers = loadUsers;
+window.createUser = createUser;
