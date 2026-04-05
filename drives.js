@@ -1,8 +1,9 @@
 async function loadDrives() {
   setTitle("All Drives");
 
-  const res = await fetch(`${API}/fund-drives`);
-  const data = await res.json();
+  const data = await apiRequest("/fund-drives");
+
+if (!data) return;
 
   if (!Array.isArray(data)) {
     render("rightPanel", "<p>Error loading drives</p>");
