@@ -44,3 +44,13 @@ function handleError(err) {
 
   showError(err.message);
 }
+function showError(msg) {
+  const box = document.getElementById("errorBox");
+
+  box.innerText = msg;
+  box.style.display = "block";
+
+  setTimeout(() => {
+    box.style.display = "none";
+  }, 4000);
+}
