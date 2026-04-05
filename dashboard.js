@@ -84,3 +84,7 @@ async function logout() {
   document.getElementById("loginPage").style.display = "block";
 }
 window.setTitle = setTitle;
+function setTitle(text) {
+  const el = document.getElementById("sectionTitle");
+  if (el) el.innerText = text;
+}
