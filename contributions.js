@@ -40,7 +40,7 @@ window.loadAllContributions = async function () {
     console.error(err);
   }
 };
-window.viewContributions = async function (driveId) {
+window.viewContributionss = async function (driveId) {
   setTitle("Contributions");
 
   render("rightPanel", `<p>Loading...</p>`);
