@@ -96,3 +96,5 @@ async function rejectDrive(id) {
 
   loadPendingDrives();
 }
+window.loadDrives = loadDrives;
+window.loadPendingDrives = loadPendingDrives;
