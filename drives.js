@@ -1,59 +1,69 @@
+/* =========================
+   LOAD ALL DRIVES
+========================= */
 async function loadDrives() {
   setTitle("All Drives");
 
-  const data = await apiRequest("/fund-drives");
+  try {
+    const data = await apiRequest("/fund-drives");
+    if (!data) return;
 
-if (!data) return;
+    if (!Array.isArray(data)) {
+      render("rightPanel", "<p>Error loading drives</p>");
+      return;
+    }
 
-  if (!Array.isArray(data)) {
-    render("rightPanel", "<p>Error loading drives</p>");
-    return;
-  }
+    let html = "";
 
-  let html = "";
+    data.forEach(d => {
+      html += `
+        <div class="card">
+          <div class="card-row">
+            <div>
+              <strong>${d.title}</strong><br>
+              <small>${d.description}</small><br>
+              <span class="badge ${d.status}">${d.status}</span>
+            </div>
 
-  data.forEach(d => {
-    html += `
-      <div class="card">
-        <div class="card-row">
-          <div>
-            <strong>${d.title}</strong><br>
-            <small>${d.description}</small><br>
-            <span class="badge ${d.status}">${d.status}</span>
-          </div>
-
-          <div>
-            <button onclick="viewContributions('${d.id}')">VIEW CONTRIBUTIONS</button>
-            <button onclick="viewContributions('${d.id}')">EDIT</button>
-            <button class="btn red" onclick="deleteDrive('${d.id}')">DELETE</button>
+            <div>
+              <button onclick="viewContributions('${d.id}')">VIEW</button>
+              <button onclick="editDrive('${d.id}')">EDIT</button>
+              ${
+                d.status !== "active"
+                  ? `<button class="btn red" onclick="deleteDrive('${d.id}')">DELETE</button>`
+                  : ""
+              }
+            </div>
           </div>
         </div>
-      </div>
-    `;
-  });
+      `;
+    });
 
-  render("rightPanel", html || "<p>No drives found</p>");
+    render("rightPanel", html || "<p>No drives found</p>");
+  } catch (err) {
+    console.error(err);
+    render("rightPanel", "<p>Failed to load drives</p>");
+  }
 }
 
 /* =========================
-   PENDING (AUTHORIZER)
+   PENDING DRIVES
 ========================= */
 async function loadPendingDrives() {
   setTitle("Pending Drives");
 
-  const res = await fetch(`${API}/fund-drives`);
-  const data = await res.json();
+  try {
+    const data = await apiRequest("/fund-drives");
+    if (!Array.isArray(data)) {
+      render("rightPanel", "<p>Error loading drives</p>");
+      return;
+    }
 
-  if (!Array.isArray(data)) {
-    render("rightPanel", "<p>Error loading drives</p>");
-    return;
-  }
+    const pending = data.filter(d => d.status === "pending");
 
-  let html = "";
+    let html = "";
 
-  data
-    .filter(d => d.status === "pending")
-    .forEach(d => {
+    pending.forEach(d => {
       html += `
         <div class="card">
           <div class="card-row">
@@ -72,35 +82,60 @@ async function loadPendingDrives() {
       `;
     });
 
-  render("rightPanel", html || "<p>No pending drives</p>");
+    render("rightPanel", html || "<p>No pending drives</p>");
+  } catch (err) {
+    console.error(err);
+    render("rightPanel", "<p>Failed to load pending drives</p>");
+  }
 }
 
+/* =========================
+   APPROVE / REJECT
+========================= */
 async function approveDrive(id) {
-  await fetch(`${API}/fund-drives/${id}/approve`, {
-    method: "PATCH",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "admin": adminUser
-    }
-  });
+  try {
+    const res = await fetch(`${API}/fund-drives/${id}/approve`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "admin": adminUser
+      }
+    });
 
-  loadPendingDrives();
+    if (!res.ok) throw new Error("Approve failed");
+
+    loadPendingDrives();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to approve drive");
+  }
 }
 
 async function rejectDrive(id) {
-  await fetch(`${API}/fund-drives/${id}/reject`, {
-    method: "PATCH",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "admin": adminUser
-    }
-  });
+  try {
+    const res = await fetch(`${API}/fund-drives/${id}/reject`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "admin": adminUser
+      }
+    });
 
-  loadPendingDrives();
+    if (!res.ok) throw new Error("Reject failed");
+
+    loadPendingDrives();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to reject drive");
+  }
 }
+
+/* =========================
+   CREATE DRIVE
+========================= */
 async function createDrive() {
-  const title = document.getElementById("title").value;
-  const description = document.getElementById("description").value;
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
   const accessType = document.getElementById("accessType").value;
   const pin = document.getElementById("drivePin").value;
 
@@ -114,29 +149,37 @@ async function createDrive() {
     return;
   }
 
-  const res = await fetch(
-    `${API}/fund-drives?title=${title}&description=${description}&access_type=${accessType}&pin=${pin}`,
-    {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "admin": adminUser
+  try {
+    const res = await fetch(
+      `${API}/fund-drives?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&access_type=${accessType}&pin=${pin}`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "admin": adminUser
+        }
       }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.detail || "Failed to create drive");
+      return;
     }
-  );
 
-  const data = await res.json();
-
-  if (data.error) {
-    alert(data.error);
-  } else {
     alert("Drive submitted for approval");
     loadDrives();
+
+  } catch (err) {
+    console.error(err);
+    alert("Error creating drive");
   }
 }
 
-window.loadDrives = loadDrives;
-window.loadPendingDrives = loadPendingDrives;
+/* =========================
+   DELETE DRIVE
+========================= */
 async function deleteDrive(id) {
   const confirmDelete = confirm("Are you sure you want to delete this drive?");
   if (!confirmDelete) return;
@@ -150,17 +193,36 @@ async function deleteDrive(id) {
       }
     });
 
+    const data = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      const err = await res.json();
-      alert(err.detail || "Failed to delete drive");
+      alert(data.detail || "Failed to delete drive");
       return;
     }
 
     alert("Drive deleted successfully");
-    loadDrives(); // refresh list
+    loadDrives();
 
   } catch (err) {
     console.error(err);
     alert("Error deleting drive");
   }
 }
+
+/* =========================
+   EDIT PLACEHOLDER (FIXED)
+========================= */
+function editDrive(id) {
+  alert("Edit UI not implemented yet for drive: " + id);
+}
+
+/* =========================
+   EXPORTS
+========================= */
+window.loadDrives = loadDrives;
+window.loadPendingDrives = loadPendingDrives;
+window.deleteDrive = deleteDrive;
+window.approveDrive = approveDrive;
+window.rejectDrive = rejectDrive;
+window.createDrive = createDrive;
+window.editDrive = editDrive;
