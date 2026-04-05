@@ -24,15 +24,15 @@ async function loadAllContributions() {
 
   render("rightPanel", html || "<p>No contributions found</p>");
 }
-
 async function viewContributions(driveId) {
   setTitle("Contributions");
 
   const data = await apiRequest(`/fund-drives/${driveId}/contributions`);
 
   let html = `
-    <div style="margin-bottom: 10px;">
-      <button class="btn" onclick="loadDrives()">⬅ Close</button>
+    <div class="card-row" style="margin-bottom:10px;">
+      <strong>Contributions</strong>
+      <button class="btn red" onclick="loadDrives()">✖ Close</button>
     </div>
   `;
 
@@ -51,7 +51,7 @@ async function viewContributions(driveId) {
   data.forEach(c => {
     html += `
       <div class="card">
-        <strong>${c.name || "Anonymous"}</strong><br>
+        <strong>${c.payer_name || "Anonymous"}</strong><br>
         <small>KES ${c.amount}</small>
       </div>
     `;
@@ -59,23 +59,3 @@ async function viewContributions(driveId) {
 
   render("rightPanel", html);
 }
-
-  let html = "";
-
-  data.forEach(c => {
-    html += `
-      <div class="card">
-        ${c.payer_name} | ${c.phone} | ${c.amount} | 
-        <span class="badge ${c.status}">${c.status}</span>
-      </div>
-    `;
-  });
-
-  render("rightPanel", html);
-}
-let html = `
-  <div class="card-row" style="margin-bottom:10px;">
-    <strong>Contributions</strong>
-    <button class="btn red" onclick="loadDrives()">✖ Close</button>
-  </div>
-`;
