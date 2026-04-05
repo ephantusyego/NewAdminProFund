@@ -26,15 +26,39 @@ async function loadAllContributions() {
 }
 
 async function viewContributions(driveId) {
-  setTitle("Drive Contributions");
+  setTitle("Contributions");
 
-  const res = await fetch(`${API}/collections/${driveId}`);
-  const data = await res.json();
+  const data = await apiRequest(`/fund-drives/${driveId}/contributions`);
+
+  let html = `
+    <div style="margin-bottom: 10px;">
+      <button class="btn" onclick="loadDrives()">⬅ Close</button>
+    </div>
+  `;
 
   if (!Array.isArray(data)) {
-    render("rightPanel", "<p>No contributions</p>");
+    html += "<p>Error loading contributions</p>";
+    render("rightPanel", html);
     return;
   }
+
+  if (data.length === 0) {
+    html += "<p>No contributions yet</p>";
+    render("rightPanel", html);
+    return;
+  }
+
+  data.forEach(c => {
+    html += `
+      <div class="card">
+        <strong>${c.name || "Anonymous"}</strong><br>
+        <small>KES ${c.amount}</small>
+      </div>
+    `;
+  });
+
+  render("rightPanel", html);
+}
 
   let html = "";
 
