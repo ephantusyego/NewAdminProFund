@@ -52,24 +52,7 @@ renderContributions(data);
     render("rightPanel", "<p>Failed to load contributions</p>");
     console.error(err);
   }
-let html = `
-  <div class="top-bar">
-    <input type="text" id="searchInput" placeholder="Search phone or name..." />
-    
-    <select id="statusFilter">
-      <option value="">All Status</option>
-      <option value="success">Success</option>
-      <option value="pending">Pending</option>
-      <option value="failed">Failed</option>
-    </select>
 
-    <input type="date" id="startDate">
-    <input type="date" id="endDate">
-
-    <button class="btn" onclick="applyFilters()">Apply</button>
-    <button class="btn green" onclick="exportCSV()">Export CSV</button>
-  </div>
-`;
 };
 window.viewContributions = async function (driveId) {
   setTitle("Contributions");
@@ -147,6 +130,9 @@ function formatDate(dateStr) {
 }
 
 function renderContributions(data) {
+  const container = document.getElementById("contributionsContainer");
+  if (!container) return;
+
   let html = `<div class="grid">`;
 
   data.forEach(c => {
@@ -168,12 +154,8 @@ function renderContributions(data) {
   });
 
   html += `</div>`;
-html += `<div id="contributionsContainer"></div>`;
-render("rightPanel", html);
 
-// render inside container
-renderContributions(data);
-  render("rightPanel", html);
+  container.innerHTML = html;
 }
 window.exportCSV = function () {
   if (!allContributions.length) return;
