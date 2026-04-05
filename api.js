@@ -32,25 +32,4 @@ async function apiRequest(endpoint, options = {}) {
     return null;
   }
 }
-function handleError(err) {
-  console.error("🔥 API ERROR:", err.message);
-
-  // Auto logout on auth issues
-  if (err.message.includes("401") || err.message.toLowerCase().includes("unauthorized")) {
-    alert("Session expired. Please login again.");
-    logout();
-    return;
-  }
-
-  showError(err.message);
-}
-function showError(msg) {
-  const box = document.getElementById("errorBox");
-
-  box.innerText = msg;
-  box.style.display = "block";
-
-  setTimeout(() => {
-    box.style.display = "none";
-  }, 4000);
-}
+f
