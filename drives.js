@@ -25,7 +25,7 @@ if (!data) return;
           <div>
             <button onclick="viewContributions('${d.id}')">VIEW CONTRIBUTIONS</button>
             <button onclick="viewContributions('${d.id}')">EDIT</button>
-            <button onclick="viewContributions('${d.id}')">DELETE</button>
+            <button class="btn red" onclick="deleteDrive('${d.id}')">DELETE</button>
           </div>
         </div>
       </div>
@@ -137,3 +137,30 @@ async function createDrive() {
 
 window.loadDrives = loadDrives;
 window.loadPendingDrives = loadPendingDrives;
+async function deleteDrive(id) {
+  const confirmDelete = confirm("Are you sure you want to delete this drive?");
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`${API}/fund-drives/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "admin": adminUser
+      }
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.detail || "Failed to delete drive");
+      return;
+    }
+
+    alert("Drive deleted successfully");
+    loadDrives(); // refresh list
+
+  } catch (err) {
+    console.error(err);
+    alert("Error deleting drive");
+  }
+}
