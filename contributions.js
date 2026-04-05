@@ -73,3 +73,9 @@ async function viewContributions(driveId) {
 
   render("rightPanel", html);
 }
+let html = `
+  <div class="card-row" style="margin-bottom:10px;">
+    <strong>Contributions</strong>
+    <button class="btn red" onclick="loadDrives()">✖ Close</button>
+  </div>
+`;
