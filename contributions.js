@@ -1,4 +1,4 @@
-async function loadAllContributions() {
+window.loadAllContributions = async function () {
   setTitle("All Contributions");
 
   const res = await fetch(`${API}/collections`);
@@ -23,8 +23,8 @@ async function loadAllContributions() {
   });
 
   render("rightPanel", html || "<p>No contributions found</p>");
-}
-async function viewContributions(driveId) {
+};
+window.viewContributions = async function (driveId) {
   setTitle("Contributions");
 
   const data = await apiRequest(`/fund-drives/${driveId}/contributions`);
@@ -58,12 +58,4 @@ async function viewContributions(driveId) {
   });
 
   render("rightPanel", html);
-}
-let lastView = "all"; // or "pending"
-
-function loadDrives() {
-  lastView = "all";
-  ...
-}
-
-
+};
