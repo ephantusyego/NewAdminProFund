@@ -129,7 +129,7 @@ function formatDate(dateStr) {
   });
 }
 
-function renderContributionss(data) {
+function renderContributions(data) {
   const container = document.getElementById("contributionsContainer");
   if (!container) return;
 
