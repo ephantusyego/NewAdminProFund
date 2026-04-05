@@ -11,34 +11,34 @@ window.loadAllContributions = async function () {
       render("rightPanel", "<p>Error loading contributions</p>");
       return;
     }
-allContributions = data;
-renderContributions(data);
-    // 🔢 Calculate totals
+
+    allContributions = data;
+
     const totalAmount = data.reduce((sum, c) => sum + (c.amount || 0), 0);
-    const totalCount = data.length;
 
     let html = `
       <div class="summary">
         <div><strong>Total:</strong> KES ${formatKES(totalAmount)}</div>
-        <div><strong>Entries:</strong> ${totalCount}</div>
+        <div><strong>Entries:</strong> ${data.length}</div>
       </div>
-<input type="date" id="startDate">
-<input type="date" id="endDate">
-<button class="btn green" onclick="exportCSV()">Export CSV</button>
-      <div class="grid">
+
+      <input type="date" id="startDate">
+      <input type="date" id="endDate">
+      <button class="btn green" onclick="exportCSV()">Export CSV</button>
+
+      <!-- ✅ THIS is where cards go -->
+      <div id="contributionsContainer"></div>
     `;
 
-    
+    render("rightPanel", html);
 
-    html += `</div>`;
-
-    render("rightPanel", html || "<p>No contributions found</p>");
+    // ✅ NOW use your correct renderer
+    renderContributions(data);
 
   } catch (err) {
     render("rightPanel", "<p>Failed to load contributions</p>");
     console.error(err);
   }
-
 };
 window.viewContributions = async function (driveId) {
   setTitle("Contributions");
