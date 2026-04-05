@@ -56,7 +56,14 @@ function applyRoleAccess() {
 }
 
 function setTitle(title) {
-  document.getElementById("sectionTitle").innerText = title;
+  const el = document.getElementById("sectionTitle");
+
+  if (!el) {
+    console.warn("⚠️ sectionTitle not found");
+    return;
+  }
+
+  el.innerText = title;
 }
 
 function render(containerId, html) {
