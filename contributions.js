@@ -132,7 +132,7 @@ function renderContributions(data) {
         <div class="card-body">
           <div><strong>Phone:</strong> ${c.phone || "-"}</div>
           <div><strong>Drive:</strong> ${c.drive_name || "-"}</div>
-          <div><strong>Drive:</strong> ${c.drive_name || c.drive?.title || "-"}</div>
+          <div><strong>Drive:</strong> ${c.drive_id || c.drive?.title || "-"}</div>
           <div><strong>Date:</strong> ${formatDate(c.created_at)}</div>
           <div class="amount">KES ${formatKES(c.amount)}</div>
         </div>
