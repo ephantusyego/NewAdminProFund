@@ -66,8 +66,4 @@ function loadDrives() {
   ...
 }
 
-function loadPendingDrives() {
-  lastView = "pending";
-  ...
-}
-<button onclick="lastView === 'pending' ? loadPendingDrives() : loadDrives()">✖ Close</button>
+
