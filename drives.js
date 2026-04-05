@@ -23,7 +23,9 @@ if (!data) return;
           </div>
 
           <div>
-            <button onclick="viewContributions('${d.id}')">👁</button>
+            <button onclick="viewContributions('${d.id}')">VIEW CONTRIBUTIONS</button>
+            <button onclick="viewContributions('${d.id}')">EDIT</button>
+            <button onclick="viewContributions('${d.id}')">DELETE</button>
           </div>
         </div>
       </div>
