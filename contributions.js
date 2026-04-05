@@ -19,7 +19,7 @@ renderContributions(data);
 
     let html = `
       <div class="summary">
-        <div><strong>Total:</strong> KES ${totalAmount}</div>
+        <div><strong>Total:</strong> KES ${formatKES(totalAmount)}</div>
         <div><strong>Entries:</strong> ${totalCount}</div>
       </div>
 <input type="date" id="startDate">
@@ -63,7 +63,11 @@ let html = `
       <option value="failed">Failed</option>
     </select>
 
+    <input type="date" id="startDate">
+    <input type="date" id="endDate">
+
     <button class="btn" onclick="applyFilters()">Apply</button>
+    <button class="btn green" onclick="exportCSV()">Export CSV</button>
   </div>
 `;
 };
@@ -127,6 +131,20 @@ window.viewContributions = async function (driveId) {
     console.error(err);
   }
 };
+function formatKES(amount) {
+  return Number(amount || 0).toLocaleString("en-KE");
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "-";
+  return new Date(dateStr).toLocaleString("en-KE", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
 
 function renderContributions(data) {
   let html = `<div class="grid">`;
@@ -138,42 +156,37 @@ function renderContributions(data) {
           <strong>${c.payer_name || "Anonymous"}</strong>
           <span class="badge ${c.status}">${c.status}</span>
         </div>
+
         <div class="card-body">
-          <div>${c.phone || "-"}</div>
-          <div class="amount">KES ${c.amount}</div>
+          <div><strong>Phone:</strong> ${c.phone || "-"}</div>
+          <div><strong>Drive:</strong> ${c.drive_name || "-"}</div>
+          <div><strong>Date:</strong> ${formatDate(c.created_at)}</div>
+          <div class="amount">KES ${formatKES(c.amount)}</div>
         </div>
       </div>
     `;
   });
 
   html += `</div>`;
+html += `<div id="contributionsContainer"></div>`;
+render("rightPanel", html);
 
+// render inside container
+renderContributions(data);
   render("rightPanel", html);
 }
-const start = document.getElementById("startDate").value;
-const end = document.getElementById("endDate").value;
-
-const matchesDate = (() => {
-  if (!start && !end) return true;
-
-  const date = new Date(c.created_at); // ensure backend sends this
-
-  if (start && date < new Date(start)) return false;
-  if (end && date > new Date(end)) return false;
-
-  return true;
-})();
-
 window.exportCSV = function () {
   if (!allContributions.length) return;
+const headers = ["Name", "Phone", "Drive", "Amount", "Status", "Date"];
 
-  const headers = ["Name", "Phone", "Amount", "Status"];
-  const rows = allContributions.map(c => [
-    c.payer_name || "Anonymous",
-    c.phone || "-",
-    c.amount,
-    c.status
-  ]);
+const rows = allContributions.map(c => [
+  c.payer_name || "Anonymous",
+  c.phone || "-",
+  c.drive_name || "-",
+  c.amount,
+  c.status,
+  formatDate(c.created_at)
+]);
 
   let csv = headers.join(",") + "\n";
   rows.forEach(r => {
@@ -187,4 +200,31 @@ window.exportCSV = function () {
   a.href = url;
   a.download = "contributions.csv";
   a.click();
+};
+window.applyFilters = function () {
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const status = document.getElementById("statusFilter").value;
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+
+  const filtered = allContributions.filter(c => {
+    // 🔍 Search filter
+    const matchesSearch =
+      !search ||
+      (c.phone && c.phone.includes(search)) ||
+      (c.payer_name && c.payer_name.toLowerCase().includes(search));
+
+    // 📊 Status filter
+    const matchesStatus = !status || c.status === status;
+
+    // 📅 Date filter
+    const date = new Date(c.created_at);
+    const matchesDate =
+      (!start || date >= new Date(start)) &&
+      (!end || date <= new Date(end));
+
+    return matchesSearch && matchesStatus && matchesDate;
+  });
+
+  renderContributions(filtered);
 };
