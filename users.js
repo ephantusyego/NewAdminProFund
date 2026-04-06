@@ -14,24 +14,32 @@ async function loadUsers() {
 
   let html = "";
 
- data.forEach(u => {
-  html += `
-    <div class="card">
-      <div><b>${u.username}</b></div>
-      <div>Role: ${u.role}</div>
-      <div>Status: ${u.is_active ? "🟢 Active" : "🔴 Disabled"}</div>
+  data.forEach(u => {
+    html += `
+      <div class="card">
+        <div><b>${u.username}</b></div>
+        <div>Role: ${u.role}</div>
+        <div>Status: ${u.is_active ? "🟢 Active" : "🔴 Disabled"}</div>
 
-      <button style="
-  background:${u.is_active ? '#ff4d4f' : '#28a745'};
-  color:white;
-  border:none;
-  padding:6px 10px;
-  cursor:pointer;
-">
-  ${u.is_active ? "Disable" : "Enable"}
-</button>
-  `;
-});
+        <button 
+          onclick="${
+            u.is_active 
+              ? `disableUser('${u.id}')` 
+              : `enableUser('${u.id}')`
+          }"
+          style="
+            background:${u.is_active ? '#ff4d4f' : '#28a745'};
+            color:white;
+            border:none;
+            padding:6px 10px;
+            cursor:pointer;
+          "
+        >
+          ${u.is_active ? "Disable" : "Enable"}
+        </button>
+      </div>
+    `;
+  });
 
   render("rightPanel", html);
 }
