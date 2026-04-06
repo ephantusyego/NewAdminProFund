@@ -14,13 +14,24 @@ async function loadUsers() {
 
   let html = "";
 
-  data.forEach(u => {
-    html += `
-      <div class="card">
-        ${u.username} | ${u.role}
-      </div>
-    `;
-  });
+ data.forEach(u => {
+  html += `
+    <div class="card">
+      <div><b>${u.username}</b></div>
+      <div>Role: ${u.role}</div>
+      <div>Status: ${u.is_active ? "🟢 Active" : "🔴 Disabled"}</div>
+
+      <button style="
+  background:${u.is_active ? '#ff4d4f' : '#28a745'};
+  color:white;
+  border:none;
+  padding:6px 10px;
+  cursor:pointer;
+">
+  ${u.is_active ? "Disable" : "Enable"}
+</button>
+  `;
+});
 
   render("rightPanel", html);
 }
@@ -46,3 +57,35 @@ async function createUser() {
 }
 window.loadUsers = loadUsers;
 window.createUser = createUser;
+async function disableUser(userId) {
+  if (!confirm("Disable this user?")) return;
+
+  const res = await fetch(`${API}/users/${userId}/disable`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  const data = await res.json();
+  alert(data.message || "User disabled");
+
+  loadUsers(); // refresh list
+}
+
+async function enableUser(userId) {
+  const res = await fetch(`${API}/users/${userId}/enable`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  const data = await res.json();
+  alert(data.message || "User enabled");
+
+  loadUsers();
+}
+
+window.disableUser = disableUser;
+window.enableUser = enableUser;
