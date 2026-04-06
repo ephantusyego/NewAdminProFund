@@ -6,22 +6,33 @@ async function loadLogs() {
   });
 
   const data = await res.json();
+  console.log("LOGS RESPONSE:", data);
 
-  if (!Array.isArray(data)) {
+  const logs = Array.isArray(data) ? data : data.logs;
+
+  if (!Array.isArray(logs)) {
     render("rightPanel", "<p>Error loading logs</p>");
     return;
   }
 
   let html = "";
 
-  data.forEach(log => {
+  logs.forEach(log => {
+    const time = log.timestamp 
+      ? new Date(log.timestamp).toLocaleString() 
+      : "No time";
+
     html += `
       <div class="card">
-        ${log.admin} → ${log.action} → ${log.target_id}
+        <div><b>👤 ${log.admin || "Unknown"}</b></div>
+        <div>⚡ Action: ${log.action}</div>
+        <div>🎯 Target: ${log.target_id || "-"}</div>
+        <div>🕒 ${time}</div>
       </div>
     `;
   });
 
   render("rightPanel", html);
 }
+
 window.loadLogs = loadLogs;
